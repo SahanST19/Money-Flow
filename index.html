@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Flow - Personal Finance Manager</title>
+    <meta name="description" content="Manage your freelance income, expenses, and loans across multiple currencies">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">💰</span>
+                    <span class="logo-text">Money Flow</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="transactions">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-text">Transactions</span>
+                </button>
+                <button class="nav-item" data-page="loans">
+                    <span class="nav-icon">💳</span>
+                    <span class="nav-text">Loans</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="month-selector">
+                        <button class="month-nav" id="prevMonth">‹</button>
+                        <span class="current-month" id="currentMonth">December 2024</span>
+                        <button class="month-nav" id="nextMonth">›</button>
+                    </div>
+                    <button class="btn btn-primary" id="addTransactionBtn">
+                        <span>+</span> Add Transaction
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Page -->
+            <section class="page active" id="dashboardPage">
+                <!-- Wallets -->
+                <div class="section-header">
+                    <h2 class="section-title">Wallets</h2>
+                    <button class="btn btn-outline btn-sm" id="addWalletBtn">+ Add Wallet</button>
+                </div>
+                <div class="wallets-grid" id="walletsGrid">
+                    <!-- Wallet cards will be injected here -->
+                </div>
+
+                <!-- Monthly Summary -->
+                <div class="section-header">
+                    <h2 class="section-title">Monthly Summary</h2>
+                </div>
+                <div class="summary-cards">
+                    <div class="summary-card income">
+                        <div class="summary-icon">📈</div>
+                        <div class="summary-info">
+                            <span class="summary-label">Total Income</span>
+                            <span class="summary-value" id="totalIncome">Rs. 0</span>
+                        </div>
+                    </div>
+                    <div class="summary-card expense">
+                        <div class="summary-icon">📉</div>
+                        <div class="summary-info">
+                            <span class="summary-label">Total Expenses</span>
+                            <span class="summary-value" id="totalExpenses">Rs. 0</span>
+                        </div>
+                    </div>
+                    <div class="summary-card balance">
+                        <div class="summary-icon">💎</div>
+                        <div class="summary-info">
+                            <span class="summary-label">Net Balance</span>
+                            <span class="summary-value" id="netBalance">Rs. 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="section-header">
+                    <h2 class="section-title">Recent Transactions</h2>
+                    <button class="btn btn-link" data-page="transactions">View All →</button>
+                </div>
+                <div class="transactions-list" id="recentTransactions">
+                    <!-- Recent transactions will be injected here -->
+                </div>
+            </section>
+
+            <!-- Transactions Page -->
+            <section class="page" id="transactionsPage">
+                <div class="section-header">
+                    <h2 class="section-title">All Transactions</h2>
+                    <div class="filter-group">
+                        <select id="filterType" class="select-input">
+                            <option value="all">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                            <option value="transfer">Transfer</option>
+                        </select>
+                        <select id="filterWallet" class="select-input">
+                            <option value="all">All Wallets</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="transactions-list" id="allTransactions">
+                    <!-- All transactions will be injected here -->
+                </div>
+            </section>
+
+            <!-- Loans Page -->
+            <section class="page" id="loansPage">
+                <div class="section-header">
+                    <h2 class="section-title">Loans</h2>
+                    <button class="btn btn-primary" id="addLoanBtn">+ Add Loan</button>
+                </div>
+                <div class="loans-tabs">
+                    <button class="tab-btn active" data-tab="given">Money Given</button>
+                    <button class="tab-btn" data-tab="taken">Money Taken</button>
+                </div>
+                <div class="loans-list" id="loansList">
+                    <!-- Loans will be injected here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Transaction</h3>
+                <button class="modal-close" id="closeTransactionModal">×</button>
+            </div>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <div class="type-selector">
+                        <button type="button" class="type-btn active" data-type="income">Income</button>
+                        <button type="button" class="type-btn" data-type="expense">Expense</button>
+                        <button type="button" class="type-btn" data-type="transfer">Transfer</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="transactionWallet">Wallet</label>
+                    <select id="transactionWallet" class="form-input" required></select>
+                </div>
+                <div class="form-group transfer-field" style="display: none;">
+                    <label class="form-label" for="toWallet">To Wallet</label>
+                    <select id="toWallet" class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="transactionAmount">Amount</label>
+                    <input type="number" id="transactionAmount" class="form-input" step="0.01" required>
+                </div>
+                <div class="form-group non-transfer-field">
+                    <label class="form-label" for="transactionCategory">Category</label>
+                    <select id="transactionCategory" class="form-input">
+                        <!-- Categories will be populated dynamically based on type -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="transactionDescription">Description</label>
+                    <input type="text" id="transactionDescription" class="form-input" placeholder="Enter description">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="transactionDate">Date</label>
+                    <input type="date" id="transactionDate" class="form-input" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelTransaction">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Wallet Modal -->
+    <div class="modal" id="walletModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Wallet</h3>
+                <button class="modal-close" id="closeWalletModal">×</button>
+            </div>
+            <form id="walletForm">
+                <div class="form-group">
+                    <label class="form-label" for="walletName">Wallet Name</label>
+                    <input type="text" id="walletName" class="form-input" placeholder="e.g., Main LKR Account" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="walletCurrency">Currency</label>
+                    <select id="walletCurrency" class="form-input" required>
+                        <option value="LKR">LKR - Sri Lankan Rupee</option>
+                        <option value="USDT">USDT - Tether</option>
+                        <option value="USD">USD - US Dollar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="walletBalance">Initial Balance</label>
+                    <input type="number" id="walletBalance" class="form-input" step="0.01" value="0">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelWallet">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Wallet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loan Modal -->
+    <div class="modal" id="loanModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Loan</h3>
+                <button class="modal-close" id="closeLoanModal">×</button>
+            </div>
+            <form id="loanForm">
+                <div class="form-group">
+                    <label class="form-label">Loan Type</label>
+                    <div class="type-selector">
+                        <button type="button" class="type-btn active" data-loan-type="given">Money Given</button>
+                        <button type="button" class="type-btn" data-loan-type="taken">Money Taken</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loanPerson">Person Name</label>
+                    <input type="text" id="loanPerson" class="form-input" placeholder="Enter name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loanAmount">Amount</label>
+                    <input type="number" id="loanAmount" class="form-input" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loanCurrency">Currency</label>
+                    <select id="loanCurrency" class="form-input" required>
+                        <option value="LKR">LKR</option>
+                        <option value="USDT">USDT</option>
+                        <option value="USD">USD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loanDate">Date</label>
+                    <input type="date" id="loanDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loanDueDate">Due Date (Optional)</label>
+                    <input type="date" id="loanDueDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loanNote">Note</label>
+                    <input type="text" id="loanNote" class="form-input" placeholder="Add a note">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelLoan">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Loan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Payment</h3>
+                <button class="modal-close" id="closePaymentModal">×</button>
+            </div>
+            <form id="paymentForm">
+                <input type="hidden" id="paymentLoanId">
+                <div class="form-group">
+                    <label class="form-label" for="paymentAmount">Amount</label>
+                    <input type="number" id="paymentAmount" class="form-input" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="paymentDate">Date</label>
+                    <input type="date" id="paymentDate" class="form-input" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelPayment">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js?v=6"></script>
+</body>
+
+</html>
